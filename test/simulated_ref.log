@@ -1,0 +1,22 @@
+PLINK v2.00a2.3LM 64-bit Intel (24 Jan 2020)
+Options in effect:
+  --bfile ./data/test_data/simulated_ref
+  --export vcf
+  --keep-allele-order
+  --out ./data/test_data/simulated_ref
+
+Hostname: tk-ritarja
+Working directory: /home/ritarja/Projects/KIR
+Start time: Wed Apr 21 18:43:43 2021
+
+Note: --keep-allele-order no longer has any effect.
+Random number seed: 1619019823
+15891 MiB RAM detected; reserving 7945 MiB for main workspace.
+Using up to 4 compute threads.
+100 samples (0 females, 0 males, 100 ambiguous; 100 founders) loaded from
+./data/test_data/simulated_ref.fam.
+346 variants loaded from ./data/test_data/simulated_ref.bim.
+Note: No phenotype data present.
+--export vcf to ./data/test_data/simulated_ref.vcf ... done.
+
+End time: Wed Apr 21 18:43:43 2021

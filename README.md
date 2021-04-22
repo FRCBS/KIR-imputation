@@ -3,19 +3,19 @@ KIR gene content imputation from FinnGen genotype platform SNP data in the Finni
 Manuscript: "KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population". 
 KIR gene absence/presence level imputation for 
 KIR2DL1 - KIR2DL2 - KIR2DL3 - KIR2DL5 - KIR2DP1 - KIR2DS1 - KIR2DS2 - KIR2DS3 - KIR2DS4 - KIR2DS5 - KIR3DL1 - KIR3DS1
------------- 
-KIR2DL1
-KIR2DL2
-KIR2DL3
-KIR2DL5
-KIR2DP1
-KIR2DS1
-KIR2DS2
-KIR2DS3
-KIR2DS4
-KIR2DS5
-KIR3DL1
-KIR3DS1
+
+KIR2DL1|
+KIR2DL2|
+KIR2DL3|
+KIR2DL5|
+KIR2DP1|
+KIR2DS1|
+KIR2DS2|
+KIR2DS3|
+KIR2DS4|
+KIR2DS5|
+KIR3DL1|
+KIR3DS1|
 
 #### code (./src)
 

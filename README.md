@@ -19,7 +19,7 @@ Manuscript: "KIR gene content imputation from single-nucleotide polymorphisms in
 #### code (./src)
 
 #### results (./results)
-Figures and tables in the manuscript.
+Manuscript figures and tables.
 
 
 #### models (./models)

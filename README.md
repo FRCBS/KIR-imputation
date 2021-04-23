@@ -39,7 +39,9 @@ java -Xmx1g -jar GenotypeHarmonizer.jar \
     --outputType PLINK_BED \ 
     --update-id --keep --update-reference-allele
  
-plink --bfile ./data/mydata_harmonized --keep-allele-order --recode A --out ./data/mydata_harmonized_dosages
+plink --bfile ./data/mydata_harmonized \
+    --keep-allele-order --recode A \
+    --out ./data/mydata_harmonized_dosages
 ```   
 The output allele dosage data can then be used as an input to the KIR imputation pipeline.
 

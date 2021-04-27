@@ -17,6 +17,15 @@ Manuscript: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content i
 
 
 #### code (./src)
+`functions.R` Helper functions for model fitting and evaluation
+
+`KIR_data.R` Data preparation
+
+`KIR_models.R` RF model fitting and testing
+
+`KIR_plotting.R` Manuscript figures
+
+`KIR-IMP.R` Data preparation and output handling for KIR\*IMP
 
 #### results (./results)
 Manuscript figures and tables.

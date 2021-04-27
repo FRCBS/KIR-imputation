@@ -1,6 +1,5 @@
 # KIR-imputation
-KIR gene content imputation from FinnGen genotype platform SNP data in the Finnish population for 
-
+KIR gene content imputation models for: 
 * <sub>KIR2DL1</sub>
 * <sub>KIR2DL2</sub>
 * <sub>KIR2DL3</sub>

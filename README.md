@@ -1,4 +1,4 @@
-# KIR-imputation
+## KIR-imputation
 KIR gene content imputation models for: 
 * <sub>KIR2DL1</sub>
 * <sub>KIR2DL2</sub>

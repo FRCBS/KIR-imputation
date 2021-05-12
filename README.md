@@ -27,6 +27,8 @@ Manuscript: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content i
 
 `KIR-IMP.R` Data preparation and output handling for KIR\*IMP
 
+`run_KIR_imputation.R` Script to run KIR imputation for plink formatted input data files
+
 #### results (./results)
 Manuscript figures and tables.
 

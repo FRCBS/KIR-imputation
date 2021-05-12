@@ -15,7 +15,7 @@ source('./src/functions.R')
 ## ----------------------------------------------------------
 
 # liftover to hg19
-bim <- fread('./data/FG_KIR.bim', data.table=F)
+bim <- fread('./data/genotypes/FG_KIR.bim', data.table=F)
 write(map(bim$V4, function(x) paste0('chr19:', x, '-', x)) %>% do.call(rbind, .), './data/KIR-IMP/vars2lift.txt', ncolumns=1)
 # read results
 lifted <- fread('./data/KIR-IMP/hglft_genome_15a09_dc1140.bed', data.table=F, header=F)[, 1] %>% 
@@ -25,7 +25,7 @@ lift.fail <- fread('./data/KIR-IMP/lift_fail.txt', header=F, data.table=F)$V1 %>
 # snps to remove
 write(bim$V2[bim$V4 %in% lift.fail$X2], './data/KIR-IMP/remove_hg19.list', ncolumns=1)
 # generate new plink data files with removed unlifted snps
-system('plink --bfile ./data/FG_KIR --exclude ./data/KIR-IMP/remove_hg19.list --make-bed --out ./data/KIR-IMP/FG_KIR_hg19')
+system('plink --bfile ./data/genotypes/FG_KIR --exclude ./data/KIR-IMP/remove_hg19.list --make-bed --out ./data/KIR-IMP/FG_KIR_hg19')
 # read bim
 bim <- fread('./data/KIR-IMP/FG_KIR_hg19.bim', data.table=F)
 # replace old positions with lifted
@@ -100,12 +100,5 @@ cor(tmp$allele1_frequency_input, tmp$allele1_frequency_reference)
 # mean of KIR*IMP estimates for accuracy excluding haplotypes
 tmp <- fread('./data/KIR-IMP/imputation_results/accuracy.csv', data.table=F)
 mean(tmp$accuracy[-c(1,2)])
-
-###########
-# tmp <- haps[which(haps$V3 %in% snp.guide$position)[1:10], 1:100]
-# (sum(tmp[1, 6:ncol(tmp)]) / length(6:ncol(tmp)))<0.5
-# (sum(tmp[2, 6:ncol(tmp)]) / length(6:ncol(tmp)))<0.5
-# (sum(tmp[3, 6:ncol(tmp)]) / length(6:ncol(tmp)))<0.5
-# (sum(tmp[4, 6:ncol(tmp)]) / length(6:ncol(tmp)))<0.5
 
 

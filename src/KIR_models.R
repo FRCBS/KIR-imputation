@@ -53,6 +53,7 @@ kir.model.full.vars <- c(map(kir.model.full, function(x) names(x$Features)) %>% 
                          map(kir.model.fits, function(x) names(x$Features)) %>% unlist) %>% unique
 kir.model.full.vars <- data.frame(Var=kir.model.full.vars, str_split_fixed(kir.model.full.vars, '_', 3)[, 1:3])
 colnames(kir.model.full.vars)[2:4] <- c('Chr', 'Pos', 'Counted_allele')
+saveRDS(kir.model.full.vars, './test/model_SNP_data.rds')
 
 # extract variant freq. means from training genotype data
 kir.model.full.vars$Counted_allele_means <- dplyr::select(fg.kir, kir.model.full.vars$Var) %>% colMeans

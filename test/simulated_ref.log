@@ -1,22 +1,24 @@
-PLINK v2.00a2.3LM 64-bit Intel (24 Jan 2020)
+PLINK v1.90b6.6 64-bit (10 Oct 2018)
 Options in effect:
-  --bfile ./data/test_data/simulated_ref
-  --export vcf
-  --keep-allele-order
-  --out ./data/test_data/simulated_ref
+  --bfile ./test/simulated_ref
+  --out ./test/simulated_ref
+  --recode A
+  --recode-allele ./test/plink_allele_ref
 
 Hostname: tk-ritarja
-Working directory: /home/ritarja/Projects/KIR
-Start time: Wed Apr 21 18:43:43 2021
+Working directory: /home/ritarja/Projects/KIR-imputation
+Start time: Wed May 12 14:49:06 2021
 
-Note: --keep-allele-order no longer has any effect.
-Random number seed: 1619019823
-15891 MiB RAM detected; reserving 7945 MiB for main workspace.
-Using up to 4 compute threads.
-100 samples (0 females, 0 males, 100 ambiguous; 100 founders) loaded from
-./data/test_data/simulated_ref.fam.
-346 variants loaded from ./data/test_data/simulated_ref.bim.
-Note: No phenotype data present.
---export vcf to ./data/test_data/simulated_ref.vcf ... done.
+Random number seed: 1620820146
+15891 MB RAM detected; reserving 7945 MB for main workspace.
+437 variants loaded from .bim file.
+100 people (0 males, 0 females, 100 ambiguous) loaded from .fam.
+Ambiguous sex IDs written to ./test/simulated_ref.nosex .
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 100 founders and 0 nonfounders present.
+Calculating allele frequencies... done.
+437 variants and 100 people pass filters and QC.
+Note: No phenotypes present.
+--recode A to ./test/simulated_ref.raw ... done.
 
-End time: Wed Apr 21 18:43:43 2021
+End time: Wed May 12 14:49:06 2021

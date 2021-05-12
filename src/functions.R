@@ -121,42 +121,49 @@ impute_VS_RF <- function(geno.dat, model) {
   
 } 
 
+# extract unoque variants from model list
+# returns data frame with position and counted allele in separate columns
+extractModelVars <- function(x) {
+  out <- map(tmp, function(x) names(x$variable.importance)) %>% unlist %>% unique 
+  out <- data.frame(Var=out, str_split_fixed(out, '_', 3)[, 1:3])
+  out$X2 <- as.integer(out$X2)
+ 
+  return(out)
+}
 
 
 ## input data integrity check and processing
-checkInputData <- function(input.raw) {
+checkInputData <- function(input.raw, input.bim, model.snps) {
   
-  # Background info:
-  # Input plink bim files should be modified to re-format snp names as "chr19_position"
-  # Thereafter plink --recode A is used with --recode-allele
-  # --recode-allele input file has variant IDs in the first column and allele IDs in the second
+  # Use allele reference file to convert to dasage format:
+  # plink --bfile input_data --recode A --recode-allele ./test/plink_allele_ref
+  
   # This function checks the input dosage file snps and replaces missing ones with mean genotype dosage
   
   # input genotype dosage data: separate sample names from genos
-  #input.samples <- input.raw[, 'IID']
-  #input.dat     <- dplyr::select(input.raw, -c('FID', 'IID', 'PAT', 'MAT', 'SEX', 'PHENOTYPE'))
   input.samples <- input.raw$IID
   input.dat     <- input.raw[, -c(1:6)]
+  # change variable names
+  input.vars <- str_split(colnames(input.dat), '_') %>% do.call(rbind, .)
+  input.vars <- data.frame('chr19', input.bim[, 4], input.vars[, ncol(input.vars)]) %>% unite(., 'X', 1:3, sep='_') %>% .$X
   
-  
-  # colnames(input.dat) <- colnames(input.dat) %>% str_split_fixed(., '_', 5) %>% 
-  #   data.frame %>% unite(., 'TT', 1, 2, 5, sep='_') %>% .$TT
+  colnames(input.dat) <- input.vars
   
   # generate a matrix with mean genotype values that can be replaced by real values if they exist
-  tmp.mat <- sapply(kir.model.full.vars$Counted_allele_means, function(x) rep(x, nrow(input.dat))) %>% 
+  tmp.mat <- sapply(model.snps$Counted_allele_means, function(x) rep(x, nrow(input.dat))) %>% 
     data.frame(stringsAsFactors=F)
   # col. names are variant names
-  colnames(tmp.mat) <- kir.model.full.vars$Var
+  colnames(tmp.mat) <- model.snps$Var
   
   # which input variants match with model variants
-  input.ind <- match(kir.model.full.vars$Var, colnames(input.dat)) %>% na.omit
+  input.ind <- match(model.snps$Var, colnames(input.dat)) %>% na.omit
   # keep only matching variants
   input.dat   <- input.dat[, input.ind]
   cat(paste0('Found ', length(input.ind), " shared variants (", 
-             round(100*(length(input.ind)/length(kir.model.full.vars$Var)), 2), "%)") )
+             round(100*(length(input.ind)/length(model.snps$Var)), 2), "%)") )
   
   # which model variants match with input variants 
-  ref.ind <- match(colnames(input.dat), kir.model.full.vars$Var)
+  ref.ind <- match(colnames(input.dat), model.snps$Var)
   # replace into the mean value matrix the actual input values based on matching
   tmp.mat[, ref.ind] <- input.dat
   

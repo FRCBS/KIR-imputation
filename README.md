@@ -35,21 +35,22 @@ Manuscript figures and tables.
 Fitted models for the 12 KIR genes as .rds files.
 
 #### test data (./test)
-The test data folder contains artificial genotype data that can be used as a reference when aligning SNP orientations of an input dataset.
-For example, [GenotypeHarmonizer](https://github.com/molgenis/systemsgenetics/wiki/Genotype-Harmonizer) by [Deelen et al.](https://bmcresnotes.biomedcentral.com/articles/10.1186/1756-0500-7-901) can be used to orient new input data as follows:
+The test data folder contains artificial genotype data for checking the scripts. The `plink_allele_ref` file is an allele orientation reference for conversion to dosage format, for example:
 ```
-java -Xmx1g -jar GenotypeHarmonizer.jar \
-    --input ./data/mydata \
-    --inputType PLINK_BED \
-    --ref ./data/test/simulated_ref \ 
-    --refType PLINK_BED \
-    --output ./data/mydata_harmonized \
-    --outputType PLINK_BED \ 
-    --update-id --keep --update-reference-allele
- 
-plink --bfile ./data/mydata_harmonized \
-    --keep-allele-order --recode A \
-    --out ./data/mydata_harmonized_dosages
+plink --bfile ./test/simulated_ref \
+      --recode-allele ./test/plink_allele_ref \
+      --recode A \
+      --out ./test/simulated_ref
 ```   
-The output allele dosage data can then be used as an input to the KIR imputation pipeline.
+The variant names in the input data should be formatted as chr19_hg38position_allele1_allele2 , for example `chr19_54480203_A_G`.
+Correctly oriented allele dosage data can then be used as an input to the KIR imputation pipeline. An example using the test files:
+```
+Rscript ./src/run_KIR_imputation.R \
+    "./results/models" \
+    "./test/simulated_ref.raw" \
+    "./test/simulated_ref.bim" \
+    "./test/output"
+```
+The output data files are tab delimited tables containing sample ID, imputation result (1 or 0 for presence/absence), and posterior probability for gene presence.
+
 

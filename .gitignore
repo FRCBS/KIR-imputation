@@ -1,5 +1,7 @@
 data/
 tmp/
+results/
 .Rproj.user
 .RData
 .Rhistory
+KIR-imputation.Rproj

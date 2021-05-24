@@ -29,14 +29,11 @@ Manuscript: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content i
 
 `run_KIR_imputation.R` Script to run KIR imputation for plink formatted input data files
 
-#### results (./results)
-Manuscript figures and tables.
-
 
 #### models (./models)
 Fitted models for the 12 KIR genes as .rds files.
 
-#### test data (./test)
+##### test data (./models/test)
 The test data folder contains artificial genotype data for checking the scripts. The `plink_allele_ref` file is an allele orientation reference for conversion to dosage format, for example:
 ```
 plink --bfile ./test/simulated_ref \

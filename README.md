@@ -45,7 +45,7 @@ The variant names in the input data should be formatted as chr19_hg38position_al
 Correctly oriented allele dosage data can then be used as an input to the KIR imputation pipeline. An example using the test files:
 ```
 Rscript ./src/run_KIR_imputation.R \
-    "./results/models" \
+    "./models" \
     "./test/simulated_ref.raw" \
     "./test/simulated_ref.bim" \
     "./test/output"

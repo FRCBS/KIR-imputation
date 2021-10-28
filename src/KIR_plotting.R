@@ -62,9 +62,12 @@ p.kir.model.preds.missing.stats <- ggplot(kir.model.preds.missing.stats, aes(Fra
 
 ## WGS/kpi comparison
 
-p.wgs.comp <- ggplot(wgs.comp, aes(KIR, Value, group=Group, color=Group)) +
+p.wgs.comp <- ggplot(filter(all.metrics, 
+                            Group %in% c('test set', 'WGS (data from Chen et al. 2020)'),
+                            Metric=='Accuracy'), 
+                     aes(KIR, Value, group=Group, color=Group)) +
   geom_point(position=position_dodge(width=0.2)) + geom_line() +
-  scale_color_manual(values=c('#F8766D', pal_npg()(5)[4])) +
+  scale_color_manual(values=c('#F8766D', ggsci::pal_npg()(5)[4])) +
   scale_y_continuous(limits=c(0.9, 1.01), expand=c(0, 0)) +
   ylab('Overall accuracy') +
   theme_minimal() +
@@ -94,20 +97,69 @@ p.test.conf <- ggplot(kir.model.preds.conf, aes(Reference, Prediction)) +
   theme(panel.grid=element_blank())
 
 
+
+## error rates by PP threshold
+
+balanced.acc.pp <- map(seq(0.05, 0.4, by=0.01), function(tt) {
+  pp.thres <- tt
+  map2(kir.model.preds, kir.model.preds %>% names, function(x, y) {
+    out <- filter(x, Predicted>0.5+pp.thres | Predicted<(0.5-pp.thres)) 
+    fsam <- nrow(out)/nrow(x) # fraction of samples left 
+    out <- confusionMatrix(ifelse(out$Predicted>0.5, 1, 0) %>% factor, out$Actual %>% factor)$byClass %>% data.frame
+    data.frame(KIR=gsub('KIR_', '', y),
+               Value=out[, 1],
+               Metric=rownames(out),
+               Thrs=pp.thres,
+               SampleF=fsam)
+  }) %>% do.call(rbind, .)
+}) %>% do.call(rbind, .)
+
+# plot per KIR gene
+p.balanced.acc.pp <- ggplot(balanced.acc.pp %>% filter(., Metric %in% c('Balanced Accuracy', 'Neg Pred Value', 'Pos Pred Value')), 
+       aes(Thrs, Value, color=Metric %>% factor)) +
+  geom_line() +
+  xlab('PP threshold size') +
+  facet_wrap(~KIR) +
+  theme_minimal() +
+  theme(panel.border=element_rect(fill=NA, size=0.3), legend.position='top',
+        panel.grid.minor=element_blank(), legend.title=element_blank())
+
+# fraction of samples left after PP filtering
+p.sample.frac.pp <- ggplot(balanced.acc.pp %>% filter(., Metric %in% c('Balanced Accuracy', 'Neg Pred Value', 'Pos Pred Value')), 
+       aes(Thrs, SampleF)) +
+  geom_line() +
+  xlab('PP threshold size') +
+  ylab('Fraction of samples left') +
+  facet_wrap(~KIR) +
+  theme_minimal() +
+  theme(panel.border=element_rect(fill=NA, size=0.3), legend.position='top',
+        panel.grid.minor=element_blank(), legend.title=element_blank(),
+        plot.margin=unit(c(44.5, 5.5, 5.5, 5.5), "pt"))
+
+
+
 ## ----------------------------------------------------------
-## figure
+## figures
 ## ----------------------------------------------------------
 
+# Figure 2
 jpeg('./results/Fig2_KIR_allplots.jpeg', width=10, height=9, res=600, units='in')
 ggarrange(
   ggarrange(p.all.metrics, 
-            plot_grid(p.wgs.comp, p.kir.model.preds.missing.stats, nrow=2, ncol=1, 
+            cowplot::plot_grid(p.wgs.comp, p.kir.model.preds.missing.stats, nrow=2, ncol=1, 
                       rel_heights=c(0.45, 0.55), labels=c('b', 'c'), align='v', axis=c("l", "r")), 
             align="h",  ncol=2, labels=c('a')),#,  rel_widths=c(1, 1), axis=c("b", "t")),
   ggarrange(p.test.bee, p.test.conf, nrow=1, ncol=2, labels=c('d', 'e')),
   ncol=1, nrow=2, heights=c(0.9, 1), align='hv'
 )
 dev.off()
+
+
+# Figure 3
+jpeg('./results/Fig3_KIR_samplefrac.jpeg', width=10, height=5, res=600, units='in')
+ggarrange(p.balanced.acc.pp, p.sample.frac.pp, ncol=2, labels=c('a', 'b'))
+dev.off()
+
 
 
 ## ----------------------------------------------------------

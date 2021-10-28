@@ -11,14 +11,13 @@ library(data.table)
 library(tidyverse)
 library(ggpubr)
 library(ranger)
-library(ROCR)
-library(pROC)
 library(caret)
 library(gridExtra)
 library(ggbeeswarm)
-library(genbankr)
+library(cowplot)
 library(ggsci)
 library(cowplot)
+library(patchwork)
 
 ## opts
 options(stringsAsFactors=F)
@@ -39,12 +38,15 @@ fit_VS_RF <- function(geno.dat, pheno.dat, imp.thrs=5e-5) {
   # join pheno and geno data by ID
   # output: first column = KIR phenotype
   tmp.dat  <- inner_join(pheno.dat, geno.dat, by='ID')[, -1] %>% na.omit
-  kir.gene <- colnames(tmp.dat)[1]; print(kir.gene) # save gene name
+  kir.gene <- colnames(tmp.dat)[1] # save gene name
+  cat(paste0(kir.gene, '\n'))
   colnames(tmp.dat)[1] <- 'KIR'
+  tmp.dat$KIR <- factor(tmp.dat$KIR)
   
   # generate class weights
-  vweights  <- table(tmp.dat[, 1])/length(tmp.dat[, 1]) %>% unname # level freqs
-  vweights  <- vweights[c(2, 1)] # reverse level freqs
+  vweights  <- table(tmp.dat[, 1])/length(tmp.dat[, 1]) # pheno level freqs
+  #vweights  <- vweights[c(2, 1)] # reverse level freqs
+  vweights  <- 1-vweights
   
   # select important features via rf
   selected.vars <- ranger(factor(KIR) ~., data=tmp.dat, probability=F, importance='permutation', class.weights=vweights,
@@ -58,6 +60,8 @@ fit_VS_RF <- function(geno.dat, pheno.dat, imp.thrs=5e-5) {
   model.train <- ranger(factor(KIR) ~., data=tmp.dat, probability=T, mtry=ncol(tmp.dat)*0.8, class.weights=vweights,
                         importance='permutation', num.trees=2000)
   
+  cat(paste0('\n'))
+  
   # return trained model and selected variants and other stuff
   list(Gene=kir.gene, Model=model.train, Features=selected.vars, 
        OOB=data.frame(Predicted=model.train$predictions[, 2], Actual=tmp.dat$KIR))
@@ -65,8 +69,13 @@ fit_VS_RF <- function(geno.dat, pheno.dat, imp.thrs=5e-5) {
 }
 
 
-## predict new data using fitted model and seleted variants;
+## predict new data using fitted model and selected variants;
 ## return also true values
+
+# geno.dat <- tmp.dat <- checkInputData(fg.kir.raw.test[, c(1:6, tmp.ind)], fg.kir.bim[tmp.ind, ], var.data)
+# pheno.dat <- hg.kir.test[, c(1, 2)] 
+# model <- kir.model.fits[[2-1]]$Model
+# rm(geno.dat); rm(pheno.dat); rm(model)
 
 predict_VS_RF <- function(geno.dat, pheno.dat, model) {
   
@@ -121,8 +130,8 @@ impute_VS_RF <- function(geno.dat, model) {
   
 } 
 
-# extract unoque variants from model list
-# returns data frame with position and counted allele in separate columns
+# extract unique variants from model list
+# returns data frame with the position and counted allele in separate columns
 extractModelVars <- function(x) {
   out <- map(tmp, function(x) names(x$variable.importance)) %>% unlist %>% unique 
   out <- data.frame(Var=out, str_split_fixed(out, '_', 3)[, 1:3])

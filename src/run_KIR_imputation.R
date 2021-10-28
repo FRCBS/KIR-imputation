@@ -7,14 +7,28 @@ suppressMessages(library(tidyverse))
 
 ## command line arguments:
 ## 1. path to model folder
-## 2. path to genotype plink dosage file
-## 3. path to genotype plink bim file
+## 2. path to genotype plink dosage file (.raw)
+## 3. path to genotype plink bim file (.bim)
 ## 4. output path
 args <- commandArgs(trailingOnly=T)[1:4]
-
 if(length(na.omit(args))!=4) stop("Incorrect number of input arguments: stopping.")
 
+
+## ----------------------------------------------------------
 ## Functions
+## ----------------------------------------------------------
+
+# input.raw <- fread("./tmp/1kG_KIR.raw", data.table=F)
+# input.bim <- fread("./tmp/1kG_KIR.bim", data.table=F, header=F)
+# model.snps <- readRDS('./tmp/tmpmodels/SNP_data.rds')
+# models <- map(list.files('./tmp/tmpmodels', 'model.+.rds', full.names=T), readRDS)
+
+# SNP harmonization
+# harmonizeVars <- function(snpref, bim, raw) {
+#   snpref$Pos
+#   map(str_split(colnames(raw)[-c(1:6)], '_'), function(x) x[length(x)])
+#   bim$V4
+# }
 
 # input data integrity check and processing
 checkInputData <- function(input.raw, input.bim, model.snps) {
@@ -26,11 +40,15 @@ checkInputData <- function(input.raw, input.bim, model.snps) {
   
   # input genotype dosage data: separate sample names from genos
   input.samples <- input.raw$IID
-  cat(paste0('Read ', length(input.samples), ' samples in the input dosage data...\n'))
+  cat(paste0('Read ', length(input.samples), ' samples in the input dosage data.\n'))
   input.dat     <- input.raw[, -c(1:6)]
   # change variable names
   input.vars <- str_split(colnames(input.dat), '_') %>% do.call(rbind, .)
-  input.vars <- data.frame('chr19', input.bim[, 4], input.vars[, ncol(input.vars)]) %>% unite(., 'X', 1:3, sep='_') %>% .$X
+  input.vars <- data.frame(paste0('chr', input.bim[, 1]), input.bim[, 4], input.vars[, ncol(input.vars)]) %>% 
+    unite(., 'X', 1:3, sep='_') %>% .$X
+  # replace illegcal characters in variant names
+  input.vars <- gsub('<', '', input.vars, fixed=T)
+  input.vars <- gsub('>', '', input.vars, fixed=T)
   
   colnames(input.dat) <- input.vars
   
@@ -45,12 +63,20 @@ checkInputData <- function(input.raw, input.bim, model.snps) {
   # keep only matching variants
   input.dat   <- input.dat[, input.ind]
   cat(paste0('Found ', length(input.ind), " model variants (", 
-             round(100*(length(input.ind)/length(model.snps$Var)), 2), "%)...\n") )
+             round(100*(length(input.ind)/length(model.snps$Var)), 2), "%) in input genotype data.\n") )
   
   # which model variants match with input variants 
   ref.ind <- match(colnames(input.dat), model.snps$Var)
   # replace into the mean value matrix the actual input values based on matching
   tmp.mat[, ref.ind] <- input.dat
+  
+  # replace missing values with mean
+  map(1:ncol(tmp.mat), function(x) {
+    nas <- is.na(tmp.mat[, x])
+    if(length(nas)>0) {
+      tmp.mat[nas, x] <<- model.snps[x, 'Counted_allele_means']
+    }
+  }) %>% invisible()
   
   # output is a data matrix with all the model variants, and value replacement with mean where no match was found
   return(data.frame(ID=input.samples, tmp.mat, stringsAsFactors=F))
@@ -58,7 +84,7 @@ checkInputData <- function(input.raw, input.bim, model.snps) {
 }
 
 # Predict new data using fitted model and seleted variants
-# return class-wise pp
+# return class pp
 impute_VS_RF <- function(geno.dat, model) {
   
   library(ranger)
@@ -73,32 +99,30 @@ impute_VS_RF <- function(geno.dat, model) {
   geno.dat <- geno.dat[, c(1, which(colnames(geno.dat) %in% vars))]
   
   # predict and return pp
-  out <- predict(model, geno.dat[, -1])$predictions[, 2] 
+  out <- predict(model, geno.dat[, -1])$predictions#[, 2] 
   
   # classify result
-  classes <- ifelse(out>0.5, 1, 0)
-  
-  # pp for class=0
-  #out <- ifelse(classes==0, 1-out, out)
+  #classes <- ifelse(out>0.5, 1, 0)
   
   # return prediction result and actual phenotype
-  data.frame(sample.id=geno.dat[, 1], gene=classes, posterior.probability=out)
+  data.frame(sample.id=geno.dat[, 1], posterior.probability=out)
   
 } 
 
-
+## ----------------------------------------------------------
 ## impute KIRs
+## ----------------------------------------------------------
 
 # read models
-models <- map(list.files(args[1], 'KIR.+.rds', full.names=T), readRDS)
+models <- map(list.files(args[1], 'model.+.rds', full.names=T), readRDS)
 if(length(na.omit(models))==0) stop("No models found! Stopping.")
 
 # KIR gene names to models
-model.names <- gsub('.rds', '', list.files(args[1], 'KIR.+.rds'), fixed=T)
+model.names <- gsub('.rds', '', list.files(args[1], 'model.+.rds'), fixed=T)
 
 # read model SNPs
-model.snps <- readRDS(paste0(args[1], '/model_SNP_data.rds')) 
-if(length(na.omit(model.snps))==0) stop("'model_SNP_data.rds' file not found. Stopping.")
+model.snps <- readRDS(paste0(args[1], '/SNP_data.rds')) 
+if(length(na.omit(model.snps))==0) stop("'SNP_data.rds' file not found. Stopping.")
 
 # read dosages
 if(file.exists(args[2])) {
@@ -116,7 +140,7 @@ tmp.dosages <- checkInputData(tmp.dosages, tmp.bim, model.snps)
 # predict
 map2(models, model.names, function(x, y) {
   out <- impute_VS_RF(tmp.dosages, model=x)
-  fwrite(out, paste0(args[4], '/imputed_', y, '.tsv'), sep='\t')
+  fwrite(out, paste0(args[4], '/imputed_', gsub('model_', '', y), '.tsv'), sep='\t')
 }) %>% invisible
 
 cat('Imputation done.\n')

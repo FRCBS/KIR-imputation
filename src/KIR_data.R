@@ -32,9 +32,8 @@ hg.kir <- dplyr::select(hg.kir, c(colnames(hg.kir)[1], colnames(hg.kir)[-1] %>% 
 
 
 ## read genotype dosage data
-fg.kir <- fread('./data/genotypes/KIR.vcf.gz.raw', data.table=F)[, -c(2:6)]
+fg.kir <- fread('./data/genotypes/KIR.raw', data.table=F)[, -c(2:6)] %>% filter(., FID %in% hg.kir$SampleID)
 colnames(fg.kir)[-1] <- str_split_fixed(colnames(fg.kir)[-1], '_', 5) %>% data.frame %>% unite(., 'TT', 1,2,5, sep='_') %>% .$TT
-
 
 ## train and test subsets
 
@@ -49,7 +48,16 @@ fg.kir.test  <- fg.kir[match(hg.kir.test$SampleID, fg.kir$FID), ] %>% na.omit
 ## check overlap between train and test: should be 0
 intersect(hg.kir.train$SampleID, hg.kir.test$SampleID)
 
+## check that all samples match in geno and pheno data sets
+all(hg.kir.train$SampleID==hg.kir.train$SampleID)
+all(hg.kir.test$SampleID==hg.kir.test$SampleID)
 
 ## read WGS kpi KIR accuracies by Chen et al. 2020
 wgs.kir <- fread('./data/1kG/KIR_WGS_accuracies.tsv', data.table=F, skip=2)
-
+colnames(wgs.kir) <- c('KIR', 'Value')
+wgs.kir$Value <- gsub('%', '', wgs.kir$Value, fixed=T) %>% as.numeric %>% "/"(100)
+wgs.kir$Group <- 'WGS (data from Chen et al. 2020)'
+wgs.kir$Metric <- 'Accuracy'
+wgs.kir <- wgs.kir[, c('Group', 'Metric', 'KIR', 'Value')]
+wgs.kir$KIR <- paste0('KIR_', wgs.kir$KIR)
+wgs.kir <- filter(wgs.kir, KIR %in% kir.model.preds.acc$KIR)

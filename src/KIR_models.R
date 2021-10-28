@@ -32,7 +32,7 @@ names(kir.model.preds) <- colnames(hg.kir.test)[2:ncol(hg.kir.test)]
 
 ## fit models to full data
 
-colnames(fg.kir)[-1] <- str_split_fixed(colnames(fg.kir)[-1], '_', 5) %>% data.frame %>% unite(., 'TT', 1,2,5, sep='_') %>% .$TT
+#colnames(fg.kir)[-1] <- str_split_fixed(colnames(fg.kir)[-1], '_', 5) %>% data.frame %>% unite(., 'TT', 1,2,5, sep='_') %>% .$TT
 kir.model.full <- map(2:ncol(hg.kir), function(x) {
   fit_VS_RF(fg.kir, hg.kir[, c(1, x)], imp.thrs=5e-5) 
 })
@@ -40,26 +40,39 @@ names(kir.model.full) <- colnames(hg.kir)[-1]
 
 # save models
 map2(kir.model.full, names(kir.model.full), function(x, y) {
-  saveRDS(x$Model, paste0("./results/models/", y, ".rds"))
+  saveRDS(x$Model, paste0("./models/", y, ".rds"))
 })
-#saveRDS(kir.model.full, "./results/models/FIN_KIR_models.rds")
 
 
 ## ----------------------------------------------------------
-## used variants
+## variants used in models
 ## ----------------------------------------------------------
 
+# used variants by gene
+
+kir.model.full.gene.var <- map2(kir.model.full, kir.model.full %>% names, function(x, y) {
+  data.frame(Imputation_target_gene=y, 
+            ModelVariantName=names(x$Features),
+            Chr=19,
+            Pos=str_split_fixed(names(x$Features), '_', 3)[, 2],
+            CountedAllele=str_split_fixed(names(x$Features), '_', 3)[, 3],
+            Importance=x$Features
+            ) %>% return()
+})
+
+# all variants into a single table
 kir.model.full.vars <- c(map(kir.model.full, function(x) names(x$Features)) %>% unlist,
                          map(kir.model.fits, function(x) names(x$Features)) %>% unlist) %>% unique
 kir.model.full.vars <- data.frame(Var=kir.model.full.vars, str_split_fixed(kir.model.full.vars, '_', 3)[, 1:3])
 colnames(kir.model.full.vars)[2:4] <- c('Chr', 'Pos', 'Counted_allele')
-saveRDS(kir.model.full.vars, './test/model_SNP_data.rds')
+saveRDS(kir.model.full.vars, './models/model_SNP_data.rds')
+var.data <- readRDS('./models/model_SNP_data.rds')
 
 # extract variant freq. means from training genotype data
 kir.model.full.vars$Counted_allele_means <- dplyr::select(fg.kir, kir.model.full.vars$Var) %>% colMeans
 
 # original variant names
-fg.vars <- fread('./data/genotypes/KIR.vcf.gz.raw', data.table=F)[, -c(1:6)] %>% colnames
+fg.vars <- fread('./data/genotypes/KIR.raw', data.table=F)[, -c(1:6)] %>% colnames
 fg.vars <- data.frame(Var=fg.vars, 
                       (str_split_fixed(fg.vars, '_', 5)[, c(1,2,5)] %>% data.frame %>% unite(., 'version', 1:3, sep='_')),
                       (str_split_fixed(fg.vars, '_', 5)[, c(3:4)] %>% data.frame))
@@ -90,11 +103,14 @@ kir.model.full.vars <- dplyr::select(kir.model.full.vars, -MinorAllele)
 colnames(kir.model.full.vars)[6:7] <- c('Minor', 'Major')
 
 
-
 ## ----------------------------------------------------------
 ## prediction of test set with 
 ## varying fraction of missing snps
 ## ----------------------------------------------------------
+
+fg.kir.bim <- fread('./data/genotypes/KIR.bim', header=F, data.table=F)
+fg.kir.raw.test <- fread('./data/genotypes/KIR.raw', data.table=F) %>% dplyr::filter(., FID %in% fg.kir.test$FID)
+colnames(fg.kir.raw.test)[-c(1:6)] <- colnames(fg.kir)[-1]
 
 # loop over fractions
 kir.model.preds.missing <- map(seq(0.1, 0.99, by=0.1), function(f) {
@@ -106,7 +122,8 @@ kir.model.preds.missing <- map(seq(0.1, 0.99, by=0.1), function(f) {
     # fraction of SNPs present
     var.fraction <- f
     # random sampling of variants
-    tmp.dat <- checkInputData(fg.kir.test[, c(1, sample(2:ncol(fg.kir.test), ncol(fg.kir.test)*var.fraction, F))])
+    tmp.ind <- sample(7:ncol(fg.kir.raw.test), (ncol(fg.kir.raw.test)-6)*var.fraction, F) %>% sort
+    tmp.dat <- checkInputData(fg.kir.raw.test[, c(1:6, tmp.ind)], fg.kir.bim[tmp.ind-6, ], var.data)
     # prediction of test set
     kir.model.preds.tmp <- map(2:ncol(hg.kir.test), function(x) {
       predict_VS_RF(tmp.dat, hg.kir.test[, c(1, x)], kir.model.fits[[x-1]]$Model) 
@@ -220,4 +237,8 @@ kir.model.full.metrics <- map2(kir.model.full, names(kir.model.full), function(x
   data.frame(Group='full data (OOB)', Metric=rownames(out), KIR=y, Value=out[, 1])
 }) %>% do.call(rbind, .)
 
+
+## WGS
+wgs.comp <- rbind(kir.model.preds.metrics %>% filter(Metric=='Accuracy'),
+                  wgs.kir)
 

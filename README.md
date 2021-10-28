@@ -17,9 +17,18 @@ Manuscript: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content i
 
 #### dependencies and requirements
 [plink 1.9](https://www.cog-genomics.org/plink/) (tested on v1.90b6.6 64-bit)
+
 [plink 2.0](https://www.cog-genomics.org/plink/2.0/) (tested on v2.00a2.3LM 64-bit Intel)
-[R v4.1.1](https://www.r-project.org/), packages [ranger](https://cran.r-project.org/web/packages/ranger/index.html) v0.13.1, [tidyverse](https://cran.r-project.org/web/packages/tidyverse/index.html) v1.3.1, [data.table](https://cran.r-project.org/web/packages/data.table/index.html) v1.14.2   
-If you use this method, please cite the above software according to the instructions given in the linked web pages!
+
+[R v4.1.1](https://www.r-project.org/)
+
+[ranger](https://cran.r-project.org/web/packages/ranger/index.html) v0.13.1
+
+[tidyverse](https://cran.r-project.org/web/packages/-tidyverse/index.html) v1.3.1
+
+[data.table](https://cran.r-project.org/web/packages/data.table/index.html) v1.14.2   
+
+Please cite the above software if you use this method.
 Tested on Ubuntu 20.04.3 LTS, Intel(R) Core(TM) i7-5600U, 16GB
 
 #### code (./src)
@@ -41,9 +50,9 @@ Tested on Ubuntu 20.04.3 LTS, Intel(R) Core(TM) i7-5600U, 16GB
 Fitted imputation models for the 12 KIR genes as .rds files, one file per gene. 
 Contains also the associated data files needed for applying the models: \plink_allele_ref and \SNP_data.rds.
 
-##### testing (./models/test)
+#### tests (./models/test)
 Folder for testing and demonstration purposes. Contains an artificial phenotype data file for building models on the 1000 Genomes data. 
-To try out the ready-made imputation models with the 1000 Genomes data, download plink formatted genotype files (run from the repository root)
+To try out the ready-made imputation models on the 1000 Genomes data, download plink formatted genotype files (run from the repository root)
 
 ```
 mkdir ./test/1kG_data
@@ -97,29 +106,4 @@ Rscript ./src/train_models.R \
         ./test/1kG_models
 ```
 The script produces the fitted imputation models in the given output dir along with associated files for SNP data, plink allele reference and OOB error estimates.
-
-
-
-
-
-
-
-contains artificial genotype data for checking the scripts. The `plink_allele_ref` file is an allele orientation reference for conversion to dosage format, for example:
-```
-plink --bfile ./test/simulated_ref \
-      --recode-allele ./test/plink_allele_ref \
-      --recode A \
-      --out ./test/simulated_ref
-```   
-The variant names in the input data should be formatted as chr19_hg38position_allele1_allele2 , for example `chr19_54480203_A_G`.
-Correctly oriented allele dosage data can then be used as an input to the KIR imputation pipeline. An example using the test files:
-```
-Rscript ./src/run_KIR_imputation.R \
-    "./models" \
-    "./test/simulated_ref.raw" \
-    "./test/simulated_ref.bim" \
-    "./test/output"
-```
-The output data files are tab delimited tables containing sample ID, imputation result (1 or 0 for presence/absence), and posterior probability for gene presence.
-
 

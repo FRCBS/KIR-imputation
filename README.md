@@ -50,11 +50,11 @@ Tested on Ubuntu 20.04.3 LTS, Intel(R) Core(TM) i7-5600U, 16GB
 
 ### Models (./models)
 Fitted imputation models for the 12 KIR genes as .rds files, one file per gene. 
-Contains also the associated data files needed for applying the models: \plink_allele_ref and \SNP_data.rds.
+Contains also the associated data files needed for applying the models: _plink_allele_ref_ and _SNP_data.rds_.
 
 ### Testing (./test)
 Contains an artificial phenotype data file for building models on the 1000 Genomes data. 
-To try out the ready-made imputation models on the 1000 Genomes data, download plink formatted genotype files (run from the repository root)
+To try out the ready-made imputation models on the 1000 Genomes data, download plink formatted genotype files (run from the repository root):
 
 ```
 mkdir ./test/1kG_data
@@ -65,7 +65,7 @@ unzstd ./test/1kG_data/chr19_phase3.pgen.zst
 unzstd ./test/1kG_data/chr19_phase3.pvar.zst
 ```
 
-and extract the KIR region into the correct plink format
+and extract the KIR region into the correct plink format:
 ```
 plink2 --pgen ./test/1kG_data/chr19_phase3.pgen \
        --pvar ./test/1kG_data/chr19_phase3.pvar \
@@ -77,7 +77,7 @@ plink2 --pgen ./test/1kG_data/chr19_phase3.pgen \
        --out ./test/1kG_data/chr19_phase3_KIR
 ```
 
-Generate a plink dosage file (.raw) using the allele orientation reference from the models folder
+Generate a plink dosage file (.raw) using the allele orientation reference from the models folder:
 ```
 plink --bfile ./test/1kG_data/chr19_phase3_KIR \
       --recode-allele ./models/plink_allele_ref \
@@ -108,5 +108,5 @@ Rscript ./src/train_models.R \
         ./test/1kG_KIR_testpheno.tsv 
         ./test/1kG_models
 ```
-The script produces the fitted imputation models in the given output dir along with associated files for SNP data, plink allele reference and OOB error estimates.
+The script saves the fitted imputation models in the given output dir along with associated files for SNP data, plink allele reference and OOB error estimates.
 

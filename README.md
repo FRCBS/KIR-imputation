@@ -19,7 +19,6 @@ KIR2DL5		KIR2DP1		KIR2DS1
 KIR2DS2		KIR2DS3		KIR2DS4
 KIR2DS5		KIR3DL1		KIR3DS1
 
-
 Manuscript: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population. 
 
 #### dependencies and requirements

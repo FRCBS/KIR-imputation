@@ -14,8 +14,8 @@ KIR gene content imputation models for
 * <sub>KIR3DS1</sub>
 
 
-| KIR2DL1 | KIR2DL2 | KIR2DL3 |
-| KIR2DL5 | KIR2DP1 | KIR2DS1 |
+ KIR2DL1  KIR2DL2  KIR2DL3 
+ KIR2DL5  KIR2DP1  KIR2DS1 
 
 
 Manuscript: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population. 

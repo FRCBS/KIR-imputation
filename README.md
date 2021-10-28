@@ -14,7 +14,7 @@ KIR gene content imputation models for
      <sub>KIR3DS1</sub>
 
 
-**Manuscript**: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population. 
+**manuscript**: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population. 
 
 #### dependencies and requirements
 [plink 1.9](https://www.cog-genomics.org/plink/) (tested on v1.90b6.6 64-bit)
@@ -52,8 +52,8 @@ Tested on Ubuntu 20.04.3 LTS, Intel(R) Core(TM) i7-5600U, 16GB
 Fitted imputation models for the 12 KIR genes as .rds files, one file per gene. 
 Contains also the associated data files needed for applying the models: \plink_allele_ref and \SNP_data.rds.
 
-#### tests (./models/test)
-Folder for testing and demonstration purposes. Contains an artificial phenotype data file for building models on the 1000 Genomes data. 
+#### testing and demo (./test)
+Contains an artificial phenotype data file for building models on the 1000 Genomes data. 
 To try out the ready-made imputation models on the 1000 Genomes data, download plink formatted genotype files (run from the repository root)
 
 ```
@@ -77,7 +77,7 @@ plink2 --pgen ./test/1kG_data/chr19_phase3.pgen \
        --out ./test/1kG_data/chr19_phase3_KIR
 ```
 
-Make a dosage file (.raw) using the allele orientation reference from the models folder
+Generate a plink dosage file (.raw) using the allele orientation reference from the models folder
 ```
 plink --bfile ./test/1kG_data/chr19_phase3_KIR \
       --recode-allele ./models/plink_allele_ref \
@@ -85,7 +85,7 @@ plink --bfile ./test/1kG_data/chr19_phase3_KIR \
       --out ./test/1kG_data/chr19_phase3_KIR
 ```
 
-Run KIR imputation. 
+Running the KIR imputation script. Input arguments in order are: path to the folder containing the models, genotype dosages (.raw) and SNPs (.bim) in plink format, and path to the output folder. 
 ```
 mkdir ./test/1kG_KIR_imputation
 Rscript ./src/run_KIR_imputation.R \
@@ -94,8 +94,9 @@ Rscript ./src/run_KIR_imputation.R \
         ./test/1kG_data/chr19_phase3_KIR.bim \
         ./test/1kG_KIR_imputation
 ```
-The output result files are tab-delimited tables containing sample ID, imputation posterior probabilities for each class of the .
+The result files are tab-delimited tables containing sample ID and imputation posterior probabilities for each class of the input phenotype (e.g. gene presence/absence).
 
+**Model training**
 
 An example of training models on the 1000 Genomes data. The above downloaded genotype data (.bim, .raw) are in appropriate format for fitting models. The reference phenotype data \1kG_KIR_testpheno.tsv is a tab-delimited text file contaning subject IDs in the first column and (KIR) genotypes in the following columns. The reference genotypes are treated as class variables.
 

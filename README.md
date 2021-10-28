@@ -1,8 +1,8 @@
 ## KIR-imputation
 KIR gene content imputation models for 
 
-     <sub>KIR2DL1</sub>
-     <sub>KIR2DL2</sub>
+     -<sub>KIR2DL1</sub>
+     -<sub>KIR2DL2</sub>
      <sub>KIR2DL3</sub>
      <sub>KIR2DL5</sub>
      <sub>KIR2DP1</sub>
@@ -15,7 +15,7 @@ KIR gene content imputation models for
      <sub>KIR3DS1</sub>
 
 
-*Manuscript*: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population. 
+**Manuscript**: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population. 
 
 #### dependencies and requirements
 [plink 1.9](https://www.cog-genomics.org/plink/) (tested on v1.90b6.6 64-bit)

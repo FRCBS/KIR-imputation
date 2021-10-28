@@ -14,9 +14,9 @@ KIR gene content imputation models for
      <sub>KIR3DS1</sub>
 
 
-**manuscript**: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population. 
+**Manuscript**: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population. 
 
-#### Dependencies and requirements
+### Dependencies and requirements
 [plink 1.9](https://www.cog-genomics.org/plink/) (tested on v1.90b6.6 64-bit)
 
 [plink 2.0](https://www.cog-genomics.org/plink/2.0/) (tested on v2.00a2.3LM 64-bit Intel)
@@ -33,7 +33,7 @@ Please cite the above software if you use this method.
 
 Tested on Ubuntu 20.04.3 LTS, Intel(R) Core(TM) i7-5600U, 16GB
 
-#### Code (./src)
+### Code (./src)
 `functions.R` Helper functions for model fitting and evaluation
 
 `KIR_data.R` Data preparation
@@ -48,11 +48,11 @@ Tested on Ubuntu 20.04.3 LTS, Intel(R) Core(TM) i7-5600U, 16GB
 
 `train_models.R` Script for training models on user's own phenotype and genotype files
 
-#### Models (./models)
+### Models (./models)
 Fitted imputation models for the 12 KIR genes as .rds files, one file per gene. 
 Contains also the associated data files needed for applying the models: \plink_allele_ref and \SNP_data.rds.
 
-#### Testing the models (./test)
+### Testing (./test)
 Contains an artificial phenotype data file for building models on the 1000 Genomes data. 
 To try out the ready-made imputation models on the 1000 Genomes data, download plink formatted genotype files (run from the repository root)
 

@@ -1,23 +1,18 @@
 ## KIR-imputation
 KIR gene content imputation models for 
-* <sub>KIR2DL1</sub>
-* <sub>KIR2DL2</sub>
-* <sub>KIR2DL3</sub>
-* <sub>KIR2DL5</sub>
-* <sub>KIR2DP1</sub>
-* <sub>KIR2DS1</sub>
-* <sub>KIR2DS2</sub>
-* <sub>KIR2DS3</sub>
-* <sub>KIR2DS4</sub>
-* <sub>KIR2DS5</sub>
-* <sub>KIR3DL1</sub>
-* <sub>KIR3DS1</sub>
+    * <sub>KIR2DL1</sub>
+    * <sub>KIR2DL2</sub>
+    * <sub>KIR2DL3</sub>
+    * <sub>KIR2DL5</sub>
+    * <sub>KIR2DP1</sub>
+    * <sub>KIR2DS1</sub>
+    * <sub>KIR2DS2</sub>
+    * <sub>KIR2DS3</sub>
+    * <sub>KIR2DS4</sub>
+    * <sub>KIR2DS5</sub>
+    * <sub>KIR3DL1</sub>
+    * <sub>KIR3DS1</sub>
 
-
-KIR2DL1         KIR2DL2         KIR2DL3 
-KIR2DL5         KIR2DP1         KIR2DS1 
-KIR2DS2         KIR2DS3         KIR2DS4
-KIR2DS5         KIR3DL1         KIR3DS1
 
 Manuscript: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population. 
 
@@ -26,15 +21,16 @@ Manuscript: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content i
 
 [plink 2.0](https://www.cog-genomics.org/plink/2.0/) (tested on v2.00a2.3LM 64-bit Intel)
 
-[R v4.1.1](https://www.r-project.org/)
+[R](https://www.r-project.org/) (tested on v4.1.1)
 
-[ranger](https://cran.r-project.org/web/packages/ranger/index.html) v0.13.1
+[ranger](https://cran.r-project.org/web/packages/ranger/index.html) (tested on v0.13.1)
 
-[tidyverse](https://cran.r-project.org/web/packages/-tidyverse/index.html) v1.3.1
+[tidyverse](https://cran.r-project.org/web/packages/-tidyverse/index.html) tested on (v1.3.1)
 
-[data.table](https://cran.r-project.org/web/packages/data.table/index.html) v1.14.2   
+[data.table](https://cran.r-project.org/web/packages/data.table/index.html) tested on (v1.14.2)   
 
 Please cite the above software if you use this method.
+
 Tested on Ubuntu 20.04.3 LTS, Intel(R) Core(TM) i7-5600U, 16GB
 
 #### code (./src)

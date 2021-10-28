@@ -13,6 +13,7 @@ KIR gene content imputation models for
 * <sub>KIR3DL1</sub>
 * <sub>KIR3DS1</sub>
 
+
 | KIR2DL1 | KIR2DL2 | KIR2DL3 |
 | KIR2DL5 | KIR2DP1 | KIR2DS1 |
 

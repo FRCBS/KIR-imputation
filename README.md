@@ -94,11 +94,11 @@ Rscript ./src/run_KIR_imputation.R \
         ./test/1kG_data/chr19_phase3_KIR.bim \
         ./test/1kG_KIR_imputation
 ```
-The result files are tab-delimited tables containing sample ID and imputation posterior probabilities for each class of the input phenotype (e.g. gene presence/absence).
+The result files are tab-delimited tables containing the sample ID and imputation posterior probabilities for each class of the input phenotype (e.g. gene presence/absence).
 
 **Training new models**
 
-Here's an example of training models on the 1000 Genomes data. The above downloaded genotype data (.bim, .raw) are in appropriate format for fitting models. The reference phenotype data \1kG_KIR_testpheno.tsv is a tab-delimited text file contaning subject IDs in the first column and (KIR) genotypes in the following columns. The reference genotypes are treated as class variables.
+Here's an example of training models on the 1000 Genomes data. Model training is not limited to KIRs but can in principle be used for any SNP-pehnotype relationship the user has. The genotype data downloaded and processed above (.bim, .raw) are in an appropriate format for genotype input data. The input reference phenotype data (_1kG_KIR_testpheno.tsv_ in this example) is a tab-delimited text file contaning the subject IDs in the first column and (KIR) phenotypes in the following columns. The reference phenotypes are treated as class variables.
 
 ```
 mkdir ./test/1kG_models
@@ -108,5 +108,5 @@ Rscript ./src/train_models.R \
         ./test/1kG_KIR_testpheno.tsv 
         ./test/1kG_models
 ```
-The script saves the fitted imputation models in the given output dir along with associated files for SNP data, plink allele reference and OOB error estimates.
+The script saves the fitted imputation models in the given output dir along with SNP data, plink allele reference and OOB error estimates.
 

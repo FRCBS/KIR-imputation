@@ -54,7 +54,7 @@ Contains also the associated data files needed for applying the models: _plink_a
 
 ### Testing (./test)
 The test folder contains an artificial phenotype data file for building models on the 1000 Genomes data. 
-To try out the ready-made imputation models and model fitting on the 1000 Genomes data, download plink formatted genotype files
+To try out the ready-made imputation models and fitting new models on the 1000 Genomes data, download plink formatted genotype files:
 
 ```
 mkdir ./test/1kG_data
@@ -65,7 +65,7 @@ unzstd ./test/1kG_data/chr19_phase3.pgen.zst
 unzstd ./test/1kG_data/chr19_phase3.pvar.zst
 ```
 
-extract the KIR genomic region and convert to the standard plink (.bed/.bim/.fam) format
+extract the KIR genomic region and convert to the standard plink (.bed/.bim/.fam) format:
 ```
 plink2 --pgen ./test/1kG_data/chr19_phase3.pgen \
        --pvar ./test/1kG_data/chr19_phase3.pvar \
@@ -89,10 +89,10 @@ plink --bfile ./test/1kG_data/chr19_phase3_KIR \
 ```
 
 The KIR imputation script has four arguments in this order: 
-    -path to the folder containing the models
-    -genotype dosages (.raw)
-    -SNPs (.bim) in plink format
-    -path to the output folder 
+    * path to the folder containing the models
+    * genotype dosages (.raw)
+    * SNPs (.bim) in plink format
+    * path to the output folder 
 ```
 mkdir ./test/1kG_KIR_imputation
 Rscript ./src/run_KIR_imputation.R \

@@ -54,7 +54,7 @@ Contains also the associated data files needed for applying the models: _plink_a
 
 ### Testing (./test)
 The test folder contains an artificial phenotype data file for building models on the 1000 Genomes data. 
-To try out the ready-made imputation models and model fitting on the 1000 Genomes data, download plink formatted genotype files:
+To try out the ready-made imputation models and model fitting on the 1000 Genomes data, download plink formatted genotype files
 
 ```
 mkdir ./test/1kG_data
@@ -65,21 +65,22 @@ unzstd ./test/1kG_data/chr19_phase3.pgen.zst
 unzstd ./test/1kG_data/chr19_phase3.pvar.zst
 ```
 
-and extract the KIR genomic region. This plink2 command generates the correct format:
+extract the KIR genomic region and convert to the standard plink (.bed/.bim/.fam) format
 ```
 plink2 --pgen ./test/1kG_data/chr19_phase3.pgen \
        --pvar ./test/1kG_data/chr19_phase3.pvar \
        --psam ./test/1kG_data/phase3_orig.psam \
        --rm-dup exclude-all \
        --set-all-var-ids @_# \
-       --chr 19 --from-mb 54.4 --to-mb 55.0 \
-       --max-alleles 2 --make-bed \
+       --chr 19 --from-mb 54.4 --to-mb 55.1 \
+       --max-alleles 2 \
+       --make-bed \
        --out ./test/1kG_data/chr19_phase3_KIR
 ```
 
 **Imputing KIRs with ready-made models**
 
-Make a plink dosage file (.raw) using the allele orientation reference from the models folder:
+The imputation script needs a plink .bim file as well as a genotype dosage file (.raw). This needs to be in a correct allele orientation, so using the allele reference file from the /models folder is required when converting to dosage format:
 ```
 plink --bfile ./test/1kG_data/chr19_phase3_KIR \
       --recode-allele ./models/plink_allele_ref \
@@ -87,7 +88,11 @@ plink --bfile ./test/1kG_data/chr19_phase3_KIR \
       --out ./test/1kG_data/chr19_phase3_KIR
 ```
 
-Running the KIR imputation script. The positional arguments are: path to the folder containing the models, genotype dosages (.raw) and SNPs (.bim) in plink format, and path to the output folder. 
+The KIR imputation script has four arguments in this order: 
+    -path to the folder containing the models
+    -genotype dosages (.raw)
+    -SNPs (.bim) in plink format
+    -path to the output folder 
 ```
 mkdir ./test/1kG_KIR_imputation
 Rscript ./src/run_KIR_imputation.R \
@@ -96,11 +101,11 @@ Rscript ./src/run_KIR_imputation.R \
         ./test/1kG_data/chr19_phase3_KIR.bim \
         ./test/1kG_KIR_imputation
 ```
-If the script runs OK, it should find just 13 SNPs shared between the models and 1000 Genomes data. The imputation result files are tab-delimited text tables containing the sample ID and imputation posterior probabilities for each class of the input phenotype (e.g. gene presence/absence).
+If the script runs OK, it finds just 13 SNPs shared between the models and 1000 Genomes data. The imputation result files are tab-delimited text tables containing a sample ID column and imputation posterior probabilities for each class of the input phenotype (e.g. gene presence/absence).
 
 **Training new models**
 
-This an example of training new models on the 1000 Genomes data. Model training is not limited to KIRs but can in principle be used for any SNP-phenotype relationship the user has. The input genotype data should be in the standard plink format (.bim & .raw). The input reference phenotype data (_1kG_KIR_testpheno.tsv_ in this example) is a tab-delimited text file contaning the subject IDs in the first column and (KIR) phenotypes in the following columns. The reference phenotypes are treated as class variables.
+The following script can be used to train new models on the 1000 Genomes data. Model training is not limited to KIRs, but can in principle be used for any SNP-phenotype relationship the user has. The input genotype data should be in the standard plink format (.bim & .raw). The input phenotype data (_1kG_KIR_testpheno.tsv_ in this example) is a tab-delimited text file contaning the subject IDs in the first column and (KIR) phenotypes in the following columns. The reference phenotypes are treated as class variables.
 
 ```
 mkdir ./test/1kG_models
@@ -110,5 +115,5 @@ Rscript ./src/train_models.R \
         ./test/1kG_KIR_testpheno.tsv 
         ./test/1kG_models
 ```
-The script saves the fitted imputation models in the given output dir along with SNP data, plink allele reference and OOB error estimates.
+The script saves the fitted imputation models to the given output dir along with a SNP data file, a plink allele reference file and OOB error estimates of the fitted models.
 

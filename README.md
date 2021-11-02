@@ -53,8 +53,8 @@ Fitted imputation models for the 12 KIR genes as .rds files, one file per gene.
 Contains also the associated data files needed for applying the models: _plink_allele_ref_ and _SNP_data.rds_.
 
 ### Testing (./test)
-Contains an artificial phenotype data file for building models on the 1000 Genomes data. 
-To try out the ready-made imputation models on the 1000 Genomes data, download plink formatted genotype files (run from the repository root):
+The test folder contains an artificial phenotype data file for building models on the 1000 Genomes data. 
+To try out the ready-made imputation models and model fitting on the 1000 Genomes data, download plink formatted genotype files:
 
 ```
 mkdir ./test/1kG_data
@@ -65,7 +65,7 @@ unzstd ./test/1kG_data/chr19_phase3.pgen.zst
 unzstd ./test/1kG_data/chr19_phase3.pvar.zst
 ```
 
-and extract the KIR region into the correct plink format:
+and extract the KIR genomic region. This plink2 command generates the correct format:
 ```
 plink2 --pgen ./test/1kG_data/chr19_phase3.pgen \
        --pvar ./test/1kG_data/chr19_phase3.pvar \
@@ -77,7 +77,9 @@ plink2 --pgen ./test/1kG_data/chr19_phase3.pgen \
        --out ./test/1kG_data/chr19_phase3_KIR
 ```
 
-Generate a plink dosage file (.raw) using the allele orientation reference from the models folder:
+**Imputing KIRs with ready-made models**
+
+Make a plink dosage file (.raw) using the allele orientation reference from the models folder:
 ```
 plink --bfile ./test/1kG_data/chr19_phase3_KIR \
       --recode-allele ./models/plink_allele_ref \
@@ -85,7 +87,7 @@ plink --bfile ./test/1kG_data/chr19_phase3_KIR \
       --out ./test/1kG_data/chr19_phase3_KIR
 ```
 
-Running the KIR imputation script. Input arguments in order are: path to the folder containing the models, genotype dosages (.raw) and SNPs (.bim) in plink format, and path to the output folder. 
+Running the KIR imputation script. The positional arguments are: path to the folder containing the models, genotype dosages (.raw) and SNPs (.bim) in plink format, and path to the output folder. 
 ```
 mkdir ./test/1kG_KIR_imputation
 Rscript ./src/run_KIR_imputation.R \
@@ -94,11 +96,11 @@ Rscript ./src/run_KIR_imputation.R \
         ./test/1kG_data/chr19_phase3_KIR.bim \
         ./test/1kG_KIR_imputation
 ```
-The result files are tab-delimited tables containing the sample ID and imputation posterior probabilities for each class of the input phenotype (e.g. gene presence/absence).
+If the script runs OK, it should find just 13 SNPs shared between the models and 1000 Genomes data. The imputation result files are tab-delimited text tables containing the sample ID and imputation posterior probabilities for each class of the input phenotype (e.g. gene presence/absence).
 
 **Training new models**
 
-Here's an example of training models on the 1000 Genomes data. Model training is not limited to KIRs but can in principle be used for any SNP-pehnotype relationship the user has. The genotype data downloaded and processed above (.bim, .raw) are in an appropriate format for genotype input data. The input reference phenotype data (_1kG_KIR_testpheno.tsv_ in this example) is a tab-delimited text file contaning the subject IDs in the first column and (KIR) phenotypes in the following columns. The reference phenotypes are treated as class variables.
+This an example of training new models on the 1000 Genomes data. Model training is not limited to KIRs but can in principle be used for any SNP-phenotype relationship the user has. The input genotype data should be in the standard plink format (.bim & .raw). The input reference phenotype data (_1kG_KIR_testpheno.tsv_ in this example) is a tab-delimited text file contaning the subject IDs in the first column and (KIR) phenotypes in the following columns. The reference phenotypes are treated as class variables.
 
 ```
 mkdir ./test/1kG_models

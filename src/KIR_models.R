@@ -32,7 +32,6 @@ names(kir.model.preds) <- colnames(hg.kir.test)[2:ncol(hg.kir.test)]
 
 ## fit models to full data
 
-#colnames(fg.kir)[-1] <- str_split_fixed(colnames(fg.kir)[-1], '_', 5) %>% data.frame %>% unite(., 'TT', 1,2,5, sep='_') %>% .$TT
 kir.model.full <- map(2:ncol(hg.kir), function(x) {
   fit_VS_RF(fg.kir, hg.kir[, c(1, x)], imp.thrs=5e-5) 
 })

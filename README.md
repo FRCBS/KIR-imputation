@@ -89,10 +89,10 @@ plink --bfile ./test/1kG_data/chr19_phase3_KIR \
 ```
 
 The KIR imputation script has four arguments in this order: 
-    * path to the folder containing the models
-    * genotype dosages (.raw)
-    * SNPs (.bim) in plink format
-    * path to the output folder 
+* path to the folder containing the models
+* genotype dosages (.raw)
+* SNPs (.bim) in plink format
+* path to the output folder 
 ```
 mkdir ./test/1kG_KIR_imputation
 Rscript ./src/run_KIR_imputation.R \

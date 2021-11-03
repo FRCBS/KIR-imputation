@@ -50,7 +50,7 @@ Tested on Ubuntu 20.04.3 LTS, Intel(R) Core(TM) i7-5600U, 16GB
 `train_models.R` Script for training models on user's own phenotype and genotype files
 
 ### Models (./models)
-Fitted imputation models for the 12 KIR genes as .rds files, one file per gene. 
+Fitted imputation models for the 12 KIR genes as RDS files, one file per gene. 
 Contains also the associated data files needed for applying the models: _plink_allele_ref_ and _SNP_data.rds_.
 
 ### Testing (./test)

@@ -172,7 +172,7 @@ dev.off()
 table.1 <- filter(all.metrics, Group=='test set') %>% dplyr::select(., -Group) %>% 
   pivot_wider(., names_from=c('Metric'), values_from='Value') %>% data.frame() %>% .[, c(1:7,12:13)]
 
-# write out
+# Table 1
 fwrite(data.frame(KIR_gene=table.1[, 1], apply(table.1[, -1], 2, signif, digits=3)), './results/Table1.tsv', sep='\t')
 
 
@@ -182,29 +182,34 @@ fwrite(data.frame(KIR_gene=table.1[, 1], apply(table.1[, -1], 2, signif, digits=
 kir.model.full.gene.var <- map2(kir.model.full, names(kir.model.full), function(x, y) {
   tmp  <- names(x$Features)
   tmp  <- str_split_fixed(tmp, '_', 3)
-  data.frame(KIR_gene=y, ModelVariantName=names(x$Features), Chr=19, Pos=as.numeric(tmp[, 2]), CountedAllele=tmp[, 3], 
+  data.frame(Imputation_target_gene=y, ModelVariantName=names(x$Features), Chr=19, Pos=as.numeric(tmp[, 2]), CountedAllele=tmp[, 3], 
              Importance=x$Features) %>% arrange(., 1/Importance)
-})
-
-# get ensembl data on SNPs
-library(biomaRt)
-ensembl <- useMart(biomart="ENSEMBL_MART_SNP", dataset="hsapiens_snp")
-listFilters(ensembl)
-listAttributes(ensembl)
-
-kir.model.full.vars.ensembl <- map(kir.model.full.vars$Pos, function(x) {
-  print(x)
-  getBM(c("refsnp_id", "allele", "chr_name", "chrom_start", "chrom_end", "chrom_strand"),
-        filters=c("chr_name", "start", "end"), values=list("19", x, x), mart=ensembl)
 }) %>% do.call(rbind, .)
 
-# join with model SNPs
-table.2 <- map(kir.model.full.gene.var, function(x) {
-  left_join(x, kir.model.full.vars.ensembl, by=c('Pos'='chrom_start')) %>% 
-    dplyr::select(., -c(allele, chr_name, chrom_end, chrom_strand)) %>% .[, c(1, 7, 2:6)]
-}) %>% do.call(rbind, .)
+# Table S1 
+fwrite(kir.model.full.gene.var[, c(1, 3:6)], './results/TableS1.tsv', sep='\t')
 
-# write out 
-fwrite(table.2, './results/Table2.tsv', sep='\t')
+
+# # get ensembl data on SNPs
+# library(biomaRt)
+# #ensembl <- useMart(biomart="ENSEMBL_MART_SNP", dataset="hsapiens_snp")
+# ensembl <- useEnsembl(biomart="ENSEMBL_MART_SNP", dataset="hsapiens_snp", mirror = "uswest")
+# listFilters(ensembl)
+# listAttributes(ensembl)
+# 
+# kir.model.full.vars.ensembl <- map(kir.model.full.vars$Pos, function(x) {
+#   print(x)
+#   getBM(c("refsnp_id", "allele", "chr_name", "chrom_start", "chrom_end", "chrom_strand"),
+#         filters=c("chr_name", "start", "end"), values=list("19", x, x), mart=ensembl)
+# }) %>% do.call(rbind, .)
+# 
+# # join with model SNPs
+# table.2 <- map(kir.model.full.gene.var, function(x) {
+#   left_join(x, kir.model.full.vars.ensembl, by=c('Pos'='chrom_start')) %>% 
+#     dplyr::select(., -c(allele, chr_name, chrom_end, chrom_strand)) %>% .[, c(1, 7, 2:6)]
+# }) %>% do.call(rbind, .)
+# 
+# # write out 
+# fwrite(table.2, './results/Table2.tsv', sep='\t')
 
 

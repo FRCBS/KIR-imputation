@@ -54,8 +54,8 @@ Fitted imputation models for the 12 KIR genes as RDS files, one file per gene.
 Contains also the associated data files needed for applying the models: _plink_allele_ref_ and _SNP_data.rds_.
 
 ### Testing (./test)
-The test folder contains an artificial phenotype data file for building models on the 1000 Genomes data. 
-To try out the ready-made imputation models and fitting new models on the 1000 Genomes data, download plink formatted genotype files:
+Intended for testing the functionality of the scripts and providing a reference for data input formats. Contains an artificial phenotype data file for building models on the 1000 Genomes data. 
+To try out the ready-made imputation models and to test fitting new models on the 1000 Genomes data, download plink formatted genotype files (on reference build GRCh37/hg19):
 
 ```
 mkdir ./test/1kG_data
@@ -81,7 +81,7 @@ plink2 --pgen ./test/1kG_data/chr19_phase3.pgen \
 
 **Imputing KIRs with ready-made models**
 
-The imputation script needs a plink .bim file as well as a genotype dosage file (.raw). This needs to be in a correct allele orientation, so using the allele reference file from the /models folder is required when converting to dosage format:
+The imputation script needs a plink .bim file as well as a genotype dosage file (.raw). This has to be in a correct allele orientation, so using the allele reference file from the /models folder is required when converting to dosage format:
 ```
 plink --bfile ./test/1kG_data/chr19_phase3_KIR \
       --recode-allele ./models/plink_allele_ref \
@@ -102,11 +102,11 @@ Rscript ./src/run_KIR_imputation.R \
         ./test/1kG_data/chr19_phase3_KIR.bim \
         ./test/1kG_KIR_imputation
 ```
-If the script runs OK, it finds just 13 SNPs shared between the models and 1000 Genomes data. The imputation result files are tab-delimited text tables containing a sample ID column and imputation posterior probabilities for each class of the input phenotype (e.g. gene presence/absence).
+If the script runs technically OK, it should find only 13 SNPs shared between the models and the 1000 Genomes target data. This is expected since the models and the data are on different reference builds. The imputation result files are tab-delimited text tables containing a sample ID column and imputation posterior probabilities for each class of the input phenotype (e.g. gene presence/absence).
 
 **Training new models**
 
-The following script can be used to train new models on the 1000 Genomes data. Model training is not limited to KIRs, but can in principle be used for any SNP-phenotype relationship the user has. The input genotype data should be in the standard plink format (.bim & .raw). The input phenotype data (_1kG_KIR_testpheno.tsv_ in this example) is a tab-delimited text file contaning the subject IDs in the first column and (KIR) phenotypes in the following columns. The reference phenotypes are treated as class variables.
+The following script can be used to train new models on input data. Model training is not limited to KIRs, but can in principle be used for any SNP-phenotype relationship the user has. The input genotype data should be in the standard plink format (.bim & .raw). The input phenotype data (_1kG_KIR_testpheno.tsv_ in this example) is a tab-delimited text file contaning the subject IDs in the first column and (KIR) phenotypes in the following columns. The reference phenotypes are treated as class variables.
 
 ```
 mkdir ./test/1kG_models

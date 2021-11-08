@@ -13,7 +13,7 @@ source('./src/functions.R')
 ## gather all accuracy metrics data for plotting
 ## ----------------------------------------------------------
 
-all.metrics        <- rbind(kir.model.fits.metrics, kir.model.preds.metrics, kir.model.full.metrics, 
+all.metrics        <- rbind(kir.model.fits.metrics, kir.model.preds.metrics, kir.model.preds.acc, kir.model.full.metrics, 
                             wgs.comp, kirimp.metrics, kirimp.acc)
 all.metrics$KIR    <- gsub('KIR_', '', all.metrics$KIR) 
 all.metrics$KIR    <- factor(all.metrics$KIR, levels=unique(all.metrics$KIR))

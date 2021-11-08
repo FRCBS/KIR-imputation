@@ -18,9 +18,9 @@ source('./src/functions.R')
 bim <- fread('./data/genotypes/FG_KIR.bim', data.table=F)
 write(map(bim$V4, function(x) paste0('chr19:', x, '-', x)) %>% do.call(rbind, .), './data/KIR-IMP/vars2lift.txt', ncolumns=1)
 # read results
-lifted <- fread('./data/KIR-IMP/hglft_genome_15a09_dc1140.bed', data.table=F, header=F)[, 1] %>% 
+lifted <- fread('./data/KIR-IMP/hglft_genome_3d381_9489a0.bed', data.table=F, header=F)[, 1] %>% 
   str_split_fixed(., ':|-', 3) %>% .[, 1:2] %>%  data.frame
-lift.fail <- fread('./data/KIR-IMP/lift_fail.txt', header=F, data.table=F)$V1 %>% .[seq(2, length(.), by=2)] %>% 
+lift.fail <- fread('./data/KIR-IMP/hglft_genome_3d381_9489a0.err', header=F, data.table=F)$V1 %>% .[seq(2, length(.), by=2)] %>% 
   str_split_fixed(., ':|-', 3) %>% .[, 1:2] %>%  data.frame
 # snps to remove
 write(bim$V2[bim$V4 %in% lift.fail$X2], './data/KIR-IMP/remove_hg19.list', ncolumns=1)
@@ -66,7 +66,7 @@ fwrite(haps, './data/KIR-IMP/FG_KIR_hg19_phased_harmonized.haps', sep=' ', col.n
 ## ----------------------------------------------------------
 
 # results data
-res <- fread('./data/KIR-IMP/imputation_results/imputations.csv', data.table=F)
+res <- fread('./data/KIR-IMP/imputation_results_2/imputations.csv', data.table=F)
 res$locus <- gsub('KIR2DS4TOTAL', 'KIR2DS4', res$locus) # measure 'Total'
 res$locus <- gsub('KIR3DL1ex9', 'KIR3DL1', res$locus)
 res <- map(gsub('_', '', colnames(hg.kir.test)[-1]), function(x) {

@@ -26,11 +26,11 @@ KIR gene content imputation models for
 
 [ranger](https://cran.r-project.org/web/packages/ranger/index.html) (tested on v0.13.1)
 
-[tidyverse](https://cran.r-project.org/web/packages/-tidyverse/index.html) tested on (v1.3.1)
+[tidyverse](https://cran.r-project.org/web/packages/-tidyverse/index.html) (tested on v1.3.1)
 
-[data.table](https://cran.r-project.org/web/packages/data.table/index.html) tested on (v1.14.2)   
+[data.table](https://cran.r-project.org/web/packages/data.table/index.html) (tested on v1.14.2)   
 
-Please cite the above software if you use this method.
+Please cite the above software and our manuscript if you use this method. 
 
 Tested on Ubuntu 20.04.3 LTS, Intel(R) Core(TM) i7-5600U, 16GB
 

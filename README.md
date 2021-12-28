@@ -113,7 +113,7 @@ mkdir ./test/1kG_models
 Rscript ./src/train_models.R \
         ./test/1kG_data/chr19_phase3_KIR.bim \
         ./test/1kG_data/chr19_phase3_KIR.raw \
-        ./test/1kG_KIR_testpheno.tsv 
+        ./test/1kG_KIR_testpheno.tsv \
         ./test/1kG_models
 ```
 The script saves the fitted imputation models to the given output dir along with a SNP data file, a plink allele reference file and OOB error estimates of the fitted models.

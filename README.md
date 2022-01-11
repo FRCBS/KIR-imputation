@@ -15,7 +15,8 @@ KIR gene content imputation models for
      KIR3DS1
 
 
-**Manuscript**: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population. [bioRxiv 2021.05.26.445789](https://www.biorxiv.org/content/10.1101/2021.05.26.445789v2); doi: https://doi.org/10.1101/2021.05.26.445789
+**Published article**: Ritari J, Hyvärinen K, Partanen J and Koskela S. KIR gene content imputation from single-nucleotide polymorphisms in the Finnish population.
+PeerJ, Jan 7, 2022 (https://peerj.com/articles/12692/)
 
 ### Dependencies and requirements
 [plink 1.9](https://www.cog-genomics.org/plink/) (tested on v1.90b6.6 64-bit)

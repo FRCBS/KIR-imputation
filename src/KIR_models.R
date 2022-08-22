@@ -37,6 +37,12 @@ kir.model.full <- map(2:ncol(hg.kir), function(x) {
 })
 names(kir.model.full) <- colnames(hg.kir)[-1]
 
+kir.model.full <- map(8, function(x) {
+  fit_VS_RF(fg.kir, hg.kir[, c(1, x)], imp.thrs=5e-5) 
+})
+names(kir.model.full) <- colnames(hg.kir)[8]
+
+
 # save models
 map2(kir.model.full, names(kir.model.full), function(x, y) {
   saveRDS(x$Model, paste0("./models/", y, ".rds"))

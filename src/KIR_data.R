@@ -17,7 +17,7 @@ source('./src/functions.R')
 ## KIR typing reference data (Histogenetics)
 
 # typing results
-hg.kir <- fread('./data/Histogenetics_KIR/KIR_Histogenetics_samples_all.tsv', data.table=F)
+hg.kir <- read_xlsx('data/phenotypes/KIR_Histogenetics_samples_all.xlsx')
 hg.kir <- gsub('+', '1', hg.kir %>% as.matrix, fixed=T)
 hg.kir <- gsub('-', '0', hg.kir, fixed=T) %>% data.frame
 
@@ -32,7 +32,7 @@ hg.kir <- dplyr::select(hg.kir, c(colnames(hg.kir)[1], colnames(hg.kir)[-1] %>% 
 
 
 ## read genotype dosage data
-fg.kir <- fread('./data/genotypes/KIR.raw', data.table=F)[, -c(2:6)] %>% filter(., FID %in% hg.kir$SampleID)
+fg.kir <- fread('data/genotypes/KIR.raw', data.table=F)[, -c(2:6)] %>% filter(., FID %in% hg.kir$SampleID)
 colnames(fg.kir)[-1] <- str_split_fixed(colnames(fg.kir)[-1], '_', 5) %>% data.frame %>% unite(., 'TT', 1,2,5, sep='_') %>% .$TT
 
 ## train and test subsets

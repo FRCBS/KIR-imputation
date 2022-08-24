@@ -47,7 +47,7 @@ ncol(fg.kir.r9)
 
 
 ## ----------------------------------------------------------
-## models
+## train models
 ## ----------------------------------------------------------
 
 kir.model.r9 <- map(2:ncol(hg.kir), function(x) {
@@ -61,10 +61,10 @@ map2(kir.model.r9, names(kir.model.r9), function(x, y) {
 })
 
 # all variants into a single table
-kir.model.r9.vars <- c(map(kir.model.r9, function(x) names(x$Features)) %>% unlist) %>% unique
-kir.model.r9.vars <- data.frame(Var=kir.model.r9.vars, str_split_fixed(kir.model.r9.vars, '_', 3)[, 1:3])
-colnames(kir.model.r9.vars)[2:4] <- c('Chr', 'Pos', 'Counted_allele')
-saveRDS(kir.model.r9.vars, './models/R9/model_SNP_data.rds')
+# kir.model.r9.vars <- c(map(kir.model.r9, function(x) names(x$Features)) %>% unlist) %>% unique
+# kir.model.r9.vars <- data.frame(Var=kir.model.r9.vars, str_split_fixed(kir.model.r9.vars, '_', 3)[, 1:3])
+# colnames(kir.model.r9.vars)[2:4] <- c('Chr', 'Pos', 'Counted_allele')
+# saveRDS(kir.model.r9.vars, './models/R9/model_SNP_data.rds')
 
 # model variants
 model.fits.vars <- map(kir.model.r9, function(x) names(x$Features)) %>% unlist %>% unique
@@ -73,7 +73,7 @@ colnames(model.fits.vars)[2:4] <- c('Chr', 'Pos', 'Counted_allele')
 # extract variant freq. means from training genotype data
 model.fits.vars$Counted_allele_means <- dplyr::select(fg.kir.r9, model.fits.vars$Var) %>% colMeans
 # save to RDS file
-saveRDS(model.fits.vars, paste0(args[4], 'models/SNP_data.rds'))
+saveRDS(model.fits.vars, 'models/SNP_data.rds')
 # save plink allele reference file
 fwrite(data.frame(unite(model.fits.vars[, 2:3], U)$U %>% gsub('chr', '', .), model.fits.vars[, 4]), 
        'models/R9/plink_allele_ref', col.names=F, row.names=F, sep='\t')

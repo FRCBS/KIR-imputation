@@ -57,7 +57,7 @@ names(kir.model.r9) <- colnames(hg.kir)[-1]
 
 # save models
 map2(kir.model.r9, names(kir.model.r9), function(x, y) {
-  saveRDS(x$Model, paste0("./models/R9/", y, "_R9.rds"))
+  saveRDS(x$Model, paste0("./models/model_", y, ".rds"))
 })
 
 # all variants into a single table
@@ -76,7 +76,7 @@ model.fits.vars$Counted_allele_means <- dplyr::select(fg.kir.r9, model.fits.vars
 saveRDS(model.fits.vars, 'models/SNP_data.rds')
 # save plink allele reference file
 fwrite(data.frame(unite(model.fits.vars[, 2:3], U)$U %>% gsub('chr', '', .), model.fits.vars[, 4]), 
-       'models/R9/plink_allele_ref', col.names=F, row.names=F, sep='\t')
+       'models/plink_allele_ref', col.names=F, row.names=F, sep='\t')
 
 
 
